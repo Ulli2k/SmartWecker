@@ -1,0 +1,37 @@
+#!/bin/bash
+
+case "$1" in 
+start)
+   /home/pi/wecker/wecker >/home/pi/wecker/wecker.log 2>&1 &
+   echo $!>/home/pi/wecker/wecker.pid
+   ;;
+stop)
+   kill `cat /home/pi/wecker/wecker.pid`
+   rm /home/pi/wecker/wecker.pid 2> /dev/null
+   rm /home/pi/wecker/wecker.uds 2> /dev/null
+   ;;
+restart)
+   $0 stop
+   $0 start
+   ;;
+status)
+   if [ -e /home/pi/wecker/wecker.pid ]; then
+      echo wecker is running, pid=`cat /home/pi/wecker/wecker.pid`
+   else
+      echo wecker is NOT running
+      exit 1
+   fi
+   ;;
+built)
+   g++ -o wecker -Wall -Wno-unused-but-set-variable -lwiringPi -lrt -Wno-write-strings -DDEVICE_ID=1 lib/MPR121/MPR121.cpp lib/TM1637/TM1637.cpp lib/WS2811/ws2812-rpi.cpp globals.cpp main.cpp
+   ;;
+update)
+  $0 stop
+  $0 built
+  $0 start
+  ;;
+*)
+   echo "Usage: $0 {start|stop|status|restart|built}"
+esac
+
+exit 0

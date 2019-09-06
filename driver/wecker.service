@@ -1,0 +1,21 @@
+[Unit]
+Description=Wecker LowLevel Functions
+After=syslog.target network.target
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=3
+PIDFile=/home/pi/wecker/wecker.pid
+
+User=root
+Group=root
+WorkingDirectory=/home/pi/wecker
+ExecStart=/home/pi/wecker/dWecker start
+ExecStop=/home/pi/wecker/dWecker stop
+ExecReload=/home/pi/wecker/wecker restart
+
+[Install]
+WantedBy=multi-user.target
+
+
